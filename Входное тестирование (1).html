@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ЕГЭ Обществознание — Полный диагностический тест</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#07111d;font-family:'Nunito',sans-serif;color:#dde6f0;}
+  ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:#0c1929;}::-webkit-scrollbar-thumb{background:#17304a;border-radius:3px;}
+  button{transition:opacity .15s;cursor:pointer;}button:hover:not(:disabled){opacity:.82;}
+  textarea,input{font-family:'Nunito',sans-serif;}textarea:focus,input:focus{outline:none;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const TG_TOKEN = "8633522323:AAFkqlDVm_X4FVmbnf9TaVahbwFmcHhOp7Y";
+const TG_CHAT  = "7409050467";
+const SAVE_KEY = "ege_progress_v3";
+
+const TOPICS = {
+  human:    {label:"Человек и общество",   color:"#818cf8", emoji:"🧠", sub:"Природа человека, познание, культура, глобализация"},
+  economy:  {label:"Экономика",            color:"#fbbf24", emoji:"📊", sub:"Рынок, финансы, макроэкономика, предпринимательство"},
+  social:   {label:"Социальные отношения", color:"#34d399", emoji:"👥", sub:"Стратификация, семья, этносы, конфликты"},
+  politics: {label:"Политика",             color:"#f87171", emoji:"🏛️", sub:"Власть, государство, партии, выборы"},
+  law:      {label:"Право",                color:"#60a5fa", emoji:"⚖️", sub:"Конституция, отрасли права, судопроизводство"},
+};
+
+const Q = [
+// ══ ЧЕЛОВЕК И ОБЩЕСТВО (1–20) ══
+{id:1,tk:"human",type:"s",q:"Что является главным отличием человека от животного?",
+ opts:["Наличие инстинктов","Способность к целенаправленной деятельности и мышлению","Жизнь в группах","Приспособление к природной среде"],ans:1},
+{id:2,tk:"human",type:"s",q:"Биологическое в человеке проявляется в:",
+ opts:["Усвоении норм морали","Инстинктах и физиологических потребностях","Создании произведений искусства","Участии в политической жизни"],ans:1},
+{id:3,tk:"human",type:"s",q:"Мировоззрение — это:",
+ opts:["Совокупность знаний о природе","Система взглядов на мир и место человека в нём","Набор профессиональных навыков","Религиозные убеждения"],ans:1},
+{id:4,tk:"human",type:"m",q:"К видам мировоззрения относятся (несколько ответов):",
+ opts:["Мифологическое","Научное","Техническое","Религиозное"],ans:[0,1,3]},
+{id:5,tk:"human",type:"s",q:"Относительная истина отличается от абсолютной тем, что она:",
+ opts:["Принята большинством учёных","Неполна и может быть уточнена","Основана на вере","Не поддаётся проверке"],ans:1},
+{id:6,tk:"human",type:"s",q:"Чувственное познание включает:",
+ opts:["Понятия и суждения","Ощущения, восприятия и представления","Умозаключения","Гипотезы и теории"],ans:1},
+{id:7,tk:"human",type:"s",q:"Критерий истины в научном познании:",
+ opts:["Мнение авторитета","Практика","Логическая стройность","Древность концепции"],ans:1},
+{id:8,tk:"human",type:"s",q:"Потребность в безопасности относится к группе:",
+ opts:["Биологических (первичных) потребностей","Социальных потребностей","Духовных потребностей","Престижных потребностей"],ans:0},
+{id:9,tk:"human",type:"s",q:"Общество в широком смысле — это:",
+ opts:["Государство","Обособившаяся от природы, но тесно связанная с ней часть мира","Население страны","Группа людей, объединённых общими интересами"],ans:1},
+{id:10,tk:"human",type:"m",q:"Черты общества как системы (несколько ответов):",
+ opts:["Наличие взаимосвязанных подсистем","Способность к саморазвитию","Полная независимость от природы","Динамичность"],ans:[0,1,3]},
+{id:11,tk:"human",type:"s",q:"Постиндустриальное общество характеризуется:",
+ opts:["Господством аграрного сектора","Ведущей ролью промышленности","Приоритетом сферы услуг и информационных технологий","Натуральным хозяйством"],ans:2},
+{id:12,tk:"human",type:"s",q:"Общественный прогресс — это:",
+ opts:["Движение от простого к сложному, от низшего к высшему","Любое изменение в обществе","Повторяющиеся циклы","Возврат к предыдущим формам"],ans:0},
+{id:13,tk:"human",type:"m",q:"Противоречивость прогресса состоит в том, что (несколько ответов):",
+ opts:["Достижения в одной сфере могут вести к потерям в другой","Прогресс всегда улучшает качество жизни всех","Технический прогресс может создавать экологические угрозы","Социальный прогресс неизбежно ускоряет экономику"],ans:[0,2]},
+{id:14,tk:"human",type:"s",q:"Глобализация — это:",
+ opts:["Распад международных связей","Процесс нарастающей взаимозависимости стран мирового сообщества","Переход власти к международным организациям","Принудительная унификация культур"],ans:1},
+{id:15,tk:"human",type:"s",q:"К народной культуре относится:",
+ opts:["Симфония","Авторский роман","Фольклор и народные промыслы","Арт-хаусное кино"],ans:2},
+{id:16,tk:"human",type:"s",q:"Массовая культура отличается:",
+ opts:["Элитарностью и сложностью","Ориентацией на широкую аудиторию и коммерческим характером","Анонимностью авторства","Передачей устно из поколения в поколение"],ans:1},
+{id:17,tk:"human",type:"m",q:"Функции морали (несколько ответов):",
+ opts:["Регулятивная","Воспитательная","Принудительная (через госаппарат)","Оценочная"],ans:[0,1,3]},
+{id:18,tk:"human",type:"s",q:"Свобода совести — это право:",
+ opts:["Свободно выбирать профессию","Исповедовать любую религию или не исповедовать никакой","Выражать политические взгляды","Участвовать в выборах"],ans:1},
+{id:19,tk:"human",type:"s",q:"Какой признак отличает науку от других форм познания?",
+ opts:["Образность","Системность и доказательность знаний","Обращение к сверхъестественному","Опора на традиции"],ans:1},
+{id:20,tk:"human",type:"t",q:"Объясните понятие «социализация» и назовите двух агентов вторичной социализации.",
+ hint:"Социализация — процесс усвоения индивидом социальных норм, ценностей и образцов поведения. Агенты вторичной социализации: школа, СМИ, трудовой коллектив, политические партии, церковь."},
+
+// ══ ЭКОНОМИКА (21–40) ══
+{id:21,tk:"economy",type:"s",q:"Факторы производства — это:",
+ opts:["Налоги и субсидии","Труд, земля, капитал и предпринимательские способности","Спрос и предложение","Импорт и экспорт"],ans:1},
+{id:22,tk:"economy",type:"s",q:"В командной экономике основные хозяйственные решения принимаются:",
+ opts:["Рынком через механизм цен","Государством (центральным плановым органом)","Домашними хозяйствами","Международными организациями"],ans:1},
+{id:23,tk:"economy",type:"s",q:"Закон спроса утверждает, что при росте цены товара:",
+ opts:["Величина спроса растёт","Величина спроса падает","Спрос не меняется","Предложение растёт"],ans:1},
+{id:24,tk:"economy",type:"s",q:"Что из перечисленного является неценовым фактором спроса?",
+ opts:["Цена данного товара","Доходы потребителей","Издержки производителей","Налог на прибыль"],ans:1},
+{id:25,tk:"economy",type:"s",q:"Рыночное равновесие устанавливается:",
+ opts:["Государственным декретом","При пересечении кривых спроса и предложения","При максимальной прибыли","При нулевой инфляции"],ans:1},
+{id:26,tk:"economy",type:"s",q:"К постоянным издержкам относится:",
+ opts:["Затраты на сырьё","Сдельная зарплата рабочих","Арендная плата за помещение","Расходы на электроэнергию для производства"],ans:2},
+{id:27,tk:"economy",type:"m",q:"Признаки рыночной экономики (несколько ответов):",
+ opts:["Свободное ценообразование","Конкуренция производителей","Централизованное планирование","Частная собственность на средства производства"],ans:[0,1,3]},
+{id:28,tk:"economy",type:"s",q:"Монополия — это рыночная структура, при которой:",
+ opts:["Много мелких продавцов","Единственный продавец контролирует весь рынок","Несколько крупных фирм","Покупатели имеют равную власть"],ans:1},
+{id:29,tk:"economy",type:"s",q:"ВВП измеряет:",
+ opts:["Совокупные доходы граждан за рубежом","Стоимость всех конечных товаров и услуг, произведённых в стране за год","Государственные расходы","Размер золотовалютных резервов"],ans:1},
+{id:30,tk:"economy",type:"s",q:"Инфляция — это:",
+ opts:["Рост реального производства","Устойчивый рост общего уровня цен","Снижение безработицы","Увеличение ВВП"],ans:1},
+{id:31,tk:"economy",type:"m",q:"Виды безработицы (несколько ответов):",
+ opts:["Фрикционная","Структурная","Циклическая","Прогрессивная"],ans:[0,1,2]},
+{id:32,tk:"economy",type:"s",q:"Денежно-кредитная политика проводится:",
+ opts:["Министерством финансов","Центральным банком","Парламентом","Налоговой службой"],ans:1},
+{id:33,tk:"economy",type:"s",q:"Государственный бюджет сводится с профицитом, если:",
+ opts:["Расходы превышают доходы","Доходы превышают расходы","Доходы равны расходам","Увеличивается государственный долг"],ans:1},
+{id:34,tk:"economy",type:"s",q:"Прямой налог — это:",
+ opts:["НДС","Акциз","Налог на доходы физических лиц (НДФЛ)","Таможенная пошлина на импорт"],ans:2},
+{id:35,tk:"economy",type:"s",q:"Облигация — это ценная бумага, дающая право на:",
+ opts:["Долю в прибыли компании","Участие в управлении фирмой","Возврат долга с фиксированным процентом","Неограниченный доход"],ans:2},
+{id:36,tk:"economy",type:"s",q:"Предпринимательство отличается от других видов деятельности:",
+ opts:["Работой по найму","Инициативой, самостоятельностью и принятием риска ради прибыли","Отсутствием цели получения дохода","Государственным финансированием"],ans:1},
+{id:37,tk:"economy",type:"s",q:"Сравнительное преимущество в международной торговле определяется:",
+ opts:["Абсолютно низкими издержками производства","Относительно меньшими альтернативными издержками","Объёмом природных ресурсов","Численностью населения"],ans:1},
+{id:38,tk:"economy",type:"s",q:"Что из перечисленного является функцией коммерческих банков?",
+ opts:["Эмиссия национальной валюты","Привлечение вкладов и выдача кредитов","Установление ключевой ставки","Управление государственным долгом"],ans:1},
+{id:39,tk:"economy",type:"m",q:"К инструментам фискальной политики государства относятся (несколько ответов):",
+ opts:["Изменение ставок налогов","Изменение ключевой ставки ЦБ","Государственные расходы","Субсидии"],ans:[0,2,3]},
+{id:40,tk:"economy",type:"t",q:"Объясните понятие «экономический рост» и назовите два его типа.",
+ hint:"Экономический рост — увеличение реального ВВП за определённый период. Два типа: 1) Экстенсивный — за счёт увеличения количества ресурсов; 2) Интенсивный — за счёт повышения эффективности (технологии, квалификация)."},
+
+// ══ СОЦИАЛЬНЫЕ ОТНОШЕНИЯ (41–55) ══
+{id:41,tk:"social",type:"s",q:"Социальная стратификация — это:",
+ opts:["Переход людей между группами","Деление общества на слои (страты) по критериям неравенства","Объединение граждан в партии","Конфликт между классами"],ans:1},
+{id:42,tk:"social",type:"m",q:"Критерии социальной стратификации по М. Веберу (несколько ответов):",
+ opts:["Богатство и доход","Власть","Религиозная принадлежность","Социальный престиж"],ans:[0,1,3]},
+{id:43,tk:"social",type:"s",q:"Вертикальная восходящая мобильность — это:",
+ opts:["Смена работы без изменения статуса","Переезд в другой город","Повышение социального статуса","Понижение в должности"],ans:2},
+{id:44,tk:"social",type:"s",q:"«Социальный лифт» — это неформальное название:",
+ opts:["Транспортного средства","Канала социальной мобильности, ускоряющего продвижение вверх","Государственной программы помощи бедным","Системы налоговых льгот"],ans:1},
+{id:45,tk:"social",type:"s",q:"Этнос — это:",
+ opts:["Государство","Исторически сложившаяся устойчивая группа людей, объединённых языком, культурой и самосознанием","Политическая партия","Религиозная организация"],ans:1},
+{id:46,tk:"social",type:"s",q:"Межнациональная интеграция — это:",
+ opts:["Вытеснение малых народов","Сближение народов, углубление сотрудничества при сохранении самобытности","Принудительное слияние культур","Распад многонационального государства"],ans:1},
+{id:47,tk:"social",type:"s",q:"Нуклеарная семья состоит из:",
+ opts:["Нескольких поколений под одной крышей","Родителей и их несовершеннолетних детей","Только супругов без детей","Расширенного клана"],ans:1},
+{id:48,tk:"social",type:"m",q:"Функции семьи (несколько ответов):",
+ opts:["Репродуктивная","Воспитательная","Судебная","Экономическая"],ans:[0,1,3]},
+{id:49,tk:"social",type:"s",q:"Социальный контроль — это:",
+ opts:["Государственный надзор за гражданами","Механизм регуляции поведения через нормы и санкции","Рейтинг социальных сетей","Управление производством"],ans:1},
+{id:50,tk:"social",type:"s",q:"Позитивные санкции — это:",
+ opts:["Наказания за отклонения","Награды и поощрения за соответствие нормам","Нейтральная реакция общества","Судебные приговоры"],ans:1},
+{id:51,tk:"social",type:"s",q:"Девиантное поведение — это:",
+ opts:["Поведение, одобряемое большинством","Отклонение от принятых в обществе норм","Образцовое следование правилам","Политическое участие"],ans:1},
+{id:52,tk:"social",type:"s",q:"Деструктивная функция социального конфликта:",
+ opts:["Выявляет скрытые проблемы","Разрушает социальные связи и дестабилизирует систему","Стимулирует изменения","Сплачивает группу"],ans:1},
+{id:53,tk:"social",type:"s",q:"Молодёжь как социальная группа характеризуется:",
+ opts:["Высоким социальным статусом","Переходным положением и поиском идентичности","Устойчивым мировоззрением","Экономической независимостью"],ans:1},
+{id:54,tk:"social",type:"s",q:"Агенты первичной социализации:",
+ opts:["Государство и политические партии","Семья и группа сверстников","СМИ и трудовой коллектив","Церковь и армия"],ans:1},
+{id:55,tk:"social",type:"t",q:"Назовите три вида социальных норм и приведите пример каждого.",
+ hint:"1) Правовые нормы — закреплены в законах (запрет кражи в УК РФ); 2) Моральные нормы — основаны на представлениях о добре и зле (уважать старших); 3) Обычаи и традиции — исторически сложившиеся правила (рукопожатие при встрече)."},
+
+// ══ ПОЛИТИКА (56–70) ══
+{id:56,tk:"politics",type:"s",q:"Политическая власть отличается от других видов власти:",
+ opts:["Применением любой силы","Опорой на законодательно закреплённые нормы и государственное принуждение","Личным авторитетом лидера","Экономическим принуждением"],ans:1},
+{id:57,tk:"politics",type:"s",q:"Функция государства по защите от внешних угроз — это функция:",
+ opts:["Социальная","Экономическая","Внешняя (оборонная)","Правоохранительная"],ans:2},
+{id:58,tk:"politics",type:"m",q:"Признаки государства (несколько ответов):",
+ opts:["Суверенитет","Территория с границами","Наличие нескольких партий","Аппарат принуждения"],ans:[0,1,3]},
+{id:59,tk:"politics",type:"s",q:"Авторитарный режим отличается от тоталитарного:",
+ opts:["Полным контролем над всеми сферами жизни","Наличием ограниченного политического плюрализма при отсутствии реальной демократии","Гарантиями прав и свобод","Многопартийными выборами"],ans:1},
+{id:60,tk:"politics",type:"s",q:"Ключевой признак демократии:",
+ opts:["Единая государственная идеология","Выборность органов власти и подотчётность им","Сильная армия","Плановая экономика"],ans:1},
+{id:61,tk:"politics",type:"m",q:"Принципы правового государства (несколько ответов):",
+ opts:["Верховенство права","Разделение властей","Однопартийная система","Защита прав и свобод человека"],ans:[0,1,3]},
+{id:62,tk:"politics",type:"s",q:"Гражданское общество — это:",
+ opts:["Аппарат государственного управления","Совокупность негосударственных институтов, объединений и отношений","Только политические партии","Судебная система"],ans:1},
+{id:63,tk:"politics",type:"s",q:"Политическая партия отличается от общественного движения тем, что она:",
+ opts:["Объединяет граждан","Имеет членские взносы","Борется за завоевание и осуществление государственной власти","Действует легально"],ans:2},
+{id:64,tk:"politics",type:"m",q:"Типы политических партий по идеологии (несколько ответов):",
+ opts:["Консервативные","Либеральные","Муниципальные","Социал-демократические"],ans:[0,1,3]},
+{id:65,tk:"politics",type:"s",q:"При пропорциональной избирательной системе мандаты распределяются:",
+ opts:["По числу округов","Пропорционально числу голосов, поданных за партийные списки","Победителю, набравшему большинство","По жребию"],ans:1},
+{id:66,tk:"politics",type:"s",q:"Политическое участие граждан включает:",
+ opts:["Только участие в выборах","Любые законные действия, влияющие на политический процесс","Исключительно работу в государственных органах","Только членство в партии"],ans:1},
+{id:67,tk:"politics",type:"s",q:"Федеративное государство, в отличие от унитарного, характеризуется:",
+ opts:["Единой системой законов без регионального уровня","Наличием субъектов федерации с собственными конституциями/уставами","Отсутствием президента","Только однопалатным парламентом"],ans:1},
+{id:68,tk:"politics",type:"s",q:"Государственная Дума РФ является:",
+ opts:["Верхней палатой парламента","Нижней палатой Федерального Собрания","Исполнительным органом","Судебным органом"],ans:1},
+{id:69,tk:"politics",type:"s",q:"Местное самоуправление в РФ:",
+ opts:["Входит в систему государственной власти","Не входит в систему органов государственной власти — это самостоятельный уровень","Подчиняется напрямую Президенту","Является частью судебной власти"],ans:1},
+{id:70,tk:"politics",type:"t",q:"Объясните понятие «политический плюрализм» и приведите два его признака.",
+ hint:"Политический плюрализм — принцип, допускающий многообразие политических сил и идеологий. Признаки: 1) Многопартийность; 2) Свобода выражения взглядов и наличие оппозиции."},
+
+// ══ ПРАВО (71–95) ══
+{id:71,tk:"law",type:"s",q:"Право отличается от морали тем, что его нормы:",
+ opts:["Регулируют поведение людей","Обязательны к исполнению и обеспечены государственным принуждением","Оценивают поступки как добро и зло","Складываются стихийно"],ans:1},
+{id:72,tk:"law",type:"s",q:"Конституция РФ как Основной закон обладает:",
+ opts:["Высшей юридической силой на всей территории РФ","Силой только в судах","Временным действием","Силой только на федеральном уровне"],ans:0},
+{id:73,tk:"law",type:"s",q:"Согласно Конституции РФ, Россия — государство:",
+ opts:["Унитарное, светское, монархическое","Федеративное, правовое, демократическое, социальное","Конфедеративное, теократическое","Президентское, плановое"],ans:1},
+{id:74,tk:"law",type:"m",q:"Личные (гражданские) права человека (несколько ответов):",
+ opts:["Право на жизнь","Право на труд","Право на неприкосновенность жилища","Право на свободу совести"],ans:[0,2,3]},
+{id:75,tk:"law",type:"s",q:"Законодательный процесс в РФ завершается:",
+ opts:["Принятием закона Государственной Думой","Одобрением Советом Федерации","Подписанием и обнародованием Президентом РФ","Регистрацией в Министерстве юстиции"],ans:2},
+{id:76,tk:"law",type:"s",q:"Гражданство РФ приобретается:",
+ opts:["Только по рождению","По рождению, в результате приёма в гражданство и по иным основаниям","Только по ходатайству","Только при наличии жилья"],ans:1},
+{id:77,tk:"law",type:"s",q:"Полная гражданская дееспособность физического лица наступает:",
+ opts:["С рождения","С 14 лет","С 16 лет","С 18 лет (или ранее при эмансипации/вступлении в брак)"],ans:3},
+{id:78,tk:"law",type:"s",q:"По договору купли-продажи продавец обязан:",
+ opts:["Уплатить цену","Передать товар покупателю","Возместить все риски покупателя","Застраховать товар"],ans:1},
+{id:79,tk:"law",type:"s",q:"Срок исковой давности по общим гражданским делам составляет:",
+ opts:["1 год","3 года","5 лет","10 лет"],ans:1},
+{id:80,tk:"law",type:"m",q:"Основания увольнения по инициативе работодателя (несколько ответов):",
+ opts:["Ликвидация организации","Прогул работника","Истечение срока трудового договора","Несоответствие должности по результатам аттестации"],ans:[0,1,3]},
+{id:81,tk:"law",type:"s",q:"Нормальная продолжительность рабочего времени по ТК РФ:",
+ opts:["36 часов в неделю","40 часов в неделю","48 часов в неделю","Не ограничена"],ans:1},
+{id:82,tk:"law",type:"s",q:"Брачный возраст по Семейному кодексу РФ:",
+ opts:["16 лет","17 лет","18 лет (с возможностью снижения до 16 при особых обстоятельствах)","21 год"],ans:2},
+{id:83,tk:"law",type:"s",q:"Имущество, нажитое супругами в браке, является:",
+ opts:["Собственностью мужа","Собственностью того, кто зарабатывает больше","Совместной собственностью (если иное не установлено брачным договором)","Государственной собственностью"],ans:2},
+{id:84,tk:"law",type:"s",q:"Административное правонарушение отличается от преступления:",
+ opts:["Наличием вины","Меньшей степенью общественной опасности","Применением наказания","Наличием потерпевшего"],ans:1},
+{id:85,tk:"law",type:"s",q:"Административная ответственность наступает с:",
+ opts:["14 лет","16 лет","18 лет","21 года"],ans:1},
+{id:86,tk:"law",type:"m",q:"Виды административных наказаний (несколько ответов):",
+ opts:["Предупреждение","Административный штраф","Лишение свободы на срок до 5 лет","Административный арест до 15 суток"],ans:[0,1,3]},
+{id:87,tk:"law",type:"s",q:"Уголовная ответственность за большинство преступлений наступает с:",
+ opts:["14 лет","16 лет","18 лет","21 года"],ans:1},
+{id:88,tk:"law",type:"s",q:"Презумпция невиновности означает, что:",
+ opts:["Любой обвиняемый виновен","Обвиняемый считается невиновным, пока его вина не доказана приговором суда","Суд всегда оправдывает обвиняемого","Следователь не обязан ничего доказывать"],ans:1},
+{id:89,tk:"law",type:"s",q:"Конституционный суд РФ:",
+ opts:["Рассматривает уголовные дела","Разрешает споры о конституционности законов","Является апелляционной инстанцией","Рассматривает административные дела"],ans:1},
+{id:90,tk:"law",type:"s",q:"Международное гуманитарное право регулирует:",
+ opts:["Торговые отношения государств","Правила ведения вооружённых конфликтов и защиту мирного населения","Порядок дипломатических отношений","Охрану интеллектуальной собственности"],ans:1},
+{id:91,tk:"law",type:"s",q:"Экологическое право предусматривает ответственность за:",
+ opts:["Неуплату алиментов","Загрязнение окружающей среды и нарушение природоохранного законодательства","Нарушение трудового договора","Уклонение от воинской обязанности"],ans:1},
+{id:92,tk:"law",type:"s",q:"Воинская обязанность граждан РФ мужского пола наступает с:",
+ opts:["16 лет","17 лет","18 лет","21 года"],ans:2},
+{id:93,tk:"law",type:"s",q:"По закону о защите прав потребителей при обнаружении недостатка товара потребитель вправе:",
+ opts:["Только вернуть товар","Потребовать замены, уценки, ремонта или возврата денег","Только потребовать ремонта","Обратиться только в суд"],ans:1},
+{id:94,tk:"law",type:"m",q:"Принципы судопроизводства в РФ (несколько ответов):",
+ opts:["Состязательность сторон","Презумпция невиновности","Закрытость всех судебных заседаний","Равенство всех перед законом и судом"],ans:[0,1,3]},
+{id:95,tk:"law",type:"t",q:"Назовите три отрасли российского права и кратко охарактеризуйте каждую.",
+ hint:"1) Конституционное — основы государственного строя, права и свободы граждан; 2) Гражданское — имущественные и личные неимущественные отношения; 3) Трудовое — отношения работника и работодателя."},
+];
+
+// Индексы письменных вопросов
+const TEXT_QS = Q.reduce((acc,q,i)=>{ if(q.type==="t") acc.push(i); return acc; },[]);
+
+function pct(c,t){return t?Math.round(c/t*100):0;}
+const C={bg:"#07111d",card:"#0c1929",border:"#17304a",text:"#dde6f0",sub:"#5e7d9a",gold:"#ddb84e"};
+
+async function sendToTelegram(text){
+  try{
+    await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({chat_id:TG_CHAT,text,parse_mode:"HTML"})
+    });
+  }catch(e){console.error("TG error",e);}
+}
+
+function saveProgress(state){try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));}catch(e){}}
+function loadProgress(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
+function clearProgress(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
+
+function EGETest(){
+  const saved=loadProgress();
+  const [screen,setScreen]=useState(saved?"resume":"name");
+  const [studentName,setStudentName]=useState(saved?.studentName||"");
+  const [idx,setIdx]=useState(saved?.idx||0);
+  const [answers,setAnswers]=useState(saved?.answers||{});
+  const [multiSel,setMultiSel]=useState([]);
+  const [textVal,setTextVal]=useState("");
+  const [showHint,setShowHint]=useState(false);
+  const [selfMark,setSelfMark]=useState(saved?.selfMark||{});
+  // Хранение текстовых ответов
+  const [textAnswers,setTextAnswers]=useState(saved?.textAnswers||{});
+  const [sending,setSending]=useState(false);
+  const [sent,setSent]=useState(false);
+
+  const q=Q[idx];
+
+  useEffect(()=>{
+    if(screen==="quiz"||screen==="results"){
+      saveProgress({studentName,idx,answers,selfMark,textAnswers});
+    }
+  },[screen,idx,answers,selfMark,textAnswers]);
+
+  const handleNext=()=>{
+    if(q.type==="m") setAnswers(p=>({...p,[idx]:[...multiSel].sort((a,b)=>a-b)}));
+    // Сохраняем текстовый ответ перед переходом
+    if(q.type==="t" && textVal.trim()){
+      setTextAnswers(p=>({...p,[idx]:textVal.trim()}));
+    }
+    if(idx<Q.length-1){setIdx(p=>p+1);setMultiSel([]);setTextVal("");setShowHint(false);}
+    else setScreen("results");
+  };
+
+  const canNext=()=>{
+    if(!q) return false;
+    if(q.type==="s") return answers[idx]!==undefined;
+    if(q.type==="m") return multiSel.length>0;
+    if(q.type==="t") return selfMark[idx]!==undefined;
+    return false;
+  };
+
+  const computeResults=()=>{
+    const ts={};Object.keys(TOPICS).forEach(k=>ts[k]={total:0,correct:0});
+    let total=0,correct=0;
+    Q.forEach((question,i)=>{
+      ts[question.tk].total++;total++;
+      if(question.type==="s"){if(answers[i]===question.ans){correct++;ts[question.tk].correct++;}}
+      else if(question.type==="m"){
+        const a=answers[i]||[];
+        if(JSON.stringify(a)===JSON.stringify([...question.ans].sort((x,y)=>x-y))){correct++;ts[question.tk].correct++;}
+      }
+      else if(question.type==="t"){if(selfMark[i]){correct++;ts[question.tk].correct++;}}
+    });
+    return{total,correct,ts};
+  };
+
+  const handleSendTelegram=async(res)=>{
+    setSending(true);
+    const{total,correct,ts}=res;
+    const ov=pct(correct,total);
+    const weak=Object.entries(ts).filter(([,v])=>pct(v.correct,v.total)<60);
+
+    // Сообщение 1: общие результаты
+    const msg1=[
+      `📋 <b>Результаты диагностического теста ЕГЭ</b>`,
+      `👤 Ученик: <b>${studentName}</b>`,``,
+      `📊 Общий результат: <b>${correct}/${total} (${ov}%)</b>`,``,
+      `<b>По разделам кодификатора:</b>`,
+      ...Object.entries(TOPICS).map(([k,v])=>{
+        const s=ts[k];const p=pct(s.correct,s.total);
+        const bar=p>=80?"🟢":p>=60?"🟡":p>=40?"🟠":"🔴";
+        return`${bar} ${v.emoji} ${v.label}: ${s.correct}/${s.total} (${p}%)`;
+      }),``,
+      weak.length>0
+        ?`⚠️ <b>Слабые темы (менее 60%):</b>\n${weak.map(([k])=>`• ${TOPICS[k].emoji} ${TOPICS[k].label}`).join('\n')}`
+        :`✅ Все темы — 60% и выше!`,
+    ].join('\n');
+    await sendToTelegram(msg1);
+
+    // Сообщение 2: письменные ответы
+    const writtenLines=[`✍️ <b>Письменные ответы — ${studentName}</b>`,``];
+    TEXT_QS.forEach(i=>{
+      const question=Q[i];
+      const mark=selfMark[i];
+      const userText=textAnswers[i]||"(ответ не введён)";
+      const markLabel=mark===true?"✅ сам отметил верно":mark===false?"❌ сам отметил неверно":"— не оценено";
+      writtenLines.push(`<b>Вопрос ${i+1}:</b> ${question.q}`);
+      writtenLines.push(`<b>Ответ ученика:</b> ${userText}`);
+      writtenLines.push(`<b>Самооценка:</b> ${markLabel}`);
+      writtenLines.push(``);
+    });
+    await sendToTelegram(writtenLines.join('\n'));
+
+    setSending(false);setSent(true);clearProgress();
+  };
+
+  const reset=()=>{
+    clearProgress();
+    setScreen("name");setStudentName("");setIdx(0);setAnswers({});
+    setMultiSel([]);setTextVal("");setShowHint(false);setSelfMark({});
+    setTextAnswers({});setSending(false);setSent(false);
+  };
+
+  /* RESUME */
+  if(screen==="resume") return(
+    <div style={{minHeight:"100vh",background:C.bg,display:"flex",alignItems:"center",justifyContent:"center",padding:"28px 20px"}}>
+      <div style={{maxWidth:440,width:"100%",textAlign:"center"}}>
+        <div style={{fontSize:48,marginBottom:16}}>💾</div>
+        <h1 style={{fontFamily:"'Crimson Pro',serif",fontSize:28,fontWeight:600,color:C.gold,margin:"0 0 10px"}}>Найден сохранённый прогресс</h1>
+        <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:14,padding:20,margin:"20px 0 24px",textAlign:"left"}}>
+          <div style={{fontSize:13,color:C.sub,marginBottom:5}}>Ученик</div>
+          <div style={{fontSize:17,fontWeight:700,color:C.text,marginBottom:14}}>{saved?.studentName}</div>
+          <div style={{fontSize:13,color:C.sub,marginBottom:5}}>Остановился на вопросе</div>
+          <div style={{fontSize:17,fontWeight:700,color:C.gold}}>{(saved?.idx||0)+1} из {Q.length}</div>
+          <div style={{background:C.border,borderRadius:4,height:6,marginTop:10,overflow:"hidden"}}>
+            <div style={{height:"100%",width:`${((saved?.idx||0)/Q.length)*100}%`,background:C.gold,borderRadius:4}}/>
+          </div>
+        </div>
+        <button onClick={()=>setScreen("quiz")}
+          style={{width:"100%",background:C.gold,color:"#07111d",border:"none",borderRadius:12,padding:"14px 0",fontSize:15,fontWeight:700,cursor:"pointer",marginBottom:10}}>
+          ▶ Продолжить с вопроса {(saved?.idx||0)+1}
+        </button>
+        <button onClick={reset}
+          style={{width:"100%",background:"transparent",border:`1px solid ${C.border}`,borderRadius:12,padding:"13px 0",fontSize:14,fontWeight:600,color:C.sub,cursor:"pointer"}}>
+          Начать заново
+        </button>
+      </div>
+    </div>
+  );
+
+  /* NAME */
+  if(screen==="name") return(
+    <div style={{minHeight:"100vh",background:C.bg,display:"flex",alignItems:"center",justifyContent:"center",padding:"28px 20px"}}>
+      <div style={{maxWidth:480,width:"100%",textAlign:"center"}}>
+        <div style={{fontSize:54,marginBottom:16}}>📋</div>
+        <h1 style={{fontFamily:"'Crimson Pro',serif",fontSize:"clamp(22px,5vw,34px)",fontWeight:600,color:C.gold,margin:"0 0 10px",lineHeight:1.2}}>
+          Диагностический тест<br/>ЕГЭ · Обществознание
+        </h1>
+        <p style={{fontSize:14,color:C.sub,margin:"0 0 10px",lineHeight:1.7}}>
+          95 вопросов · 5 разделов кодификатора · ~70 минут<br/>
+          <span style={{color:"#34d399",fontSize:13}}>✓ Прогресс сохраняется автоматически</span>
+        </p>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:22,textAlign:"left"}}>
+          {Object.entries(TOPICS).map(([k,v])=>(
+            <div key={k} style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:10,padding:"10px 12px",display:"flex",alignItems:"flex-start",gap:8}}>
+              <span style={{fontSize:18,marginTop:2}}>{v.emoji}</span>
+              <div>
+                <div style={{fontSize:11,fontWeight:700,color:v.color}}>{v.label}</div>
+                <div style={{fontSize:10,color:C.sub,lineHeight:1.4,marginTop:2}}>{v.sub}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{textAlign:"left",marginBottom:18}}>
+          <label style={{fontSize:12,fontWeight:700,color:C.sub,display:"block",marginBottom:8,textTransform:"uppercase",letterSpacing:"1px"}}>Как тебя зовут?</label>
+          <input autoFocus value={studentName} onChange={e=>setStudentName(e.target.value)}
+            onKeyDown={e=>{if(e.key==="Enter"&&studentName.trim())setScreen("quiz");}}
+            placeholder="Имя и фамилия..."
+            style={{width:"100%",background:C.card,border:`1.5px solid ${studentName.trim()?C.gold:C.border}`,borderRadius:12,padding:"14px 16px",color:C.text,fontSize:16,transition:"border-color .2s"}}/>
+        </div>
+        <button onClick={()=>{if(studentName.trim())setScreen("quiz");}} disabled={!studentName.trim()}
+          style={{width:"100%",background:studentName.trim()?C.gold:C.border,color:studentName.trim()?"#07111d":C.sub,border:"none",borderRadius:12,padding:"15px 0",fontSize:16,fontWeight:700,cursor:studentName.trim()?"pointer":"not-allowed",transition:"all .2s"}}>
+          Начать тест →
+        </button>
+      </div>
+    </div>
+  );
+
+  /* RESULTS */
+  if(screen==="results"){
+    const res=computeResults();
+    const{total,correct,ts}=res;
+    const ov=pct(correct,total);
+    const lvl=ov>=80?"Отлично 🎉":ov>=60?"Хорошо 👍":ov>=40?"Удовлетворительно":"Нужна серьёзная работа";
+    const lvlColor=ov>=80?"#34d399":ov>=60?"#fbbf24":ov>=40?"#fb923c":"#f87171";
+    const weak=Object.entries(ts).filter(([,v])=>pct(v.correct,v.total)<60);
+    return(
+      <div style={{minHeight:"100vh",background:C.bg,padding:"28px 20px"}}>
+        <div style={{maxWidth:600,margin:"0 auto"}}>
+          <h1 style={{fontFamily:"'Crimson Pro',serif",fontSize:28,fontWeight:600,color:C.gold,textAlign:"center",marginBottom:4}}>Результаты теста</h1>
+          <p style={{textAlign:"center",color:C.sub,fontSize:13,marginBottom:18}}>{studentName} · полный кодификатор ЕГЭ</p>
+          <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:16,padding:"22px",textAlign:"center",marginBottom:12}}>
+            <div style={{fontFamily:"'Crimson Pro',serif",fontSize:64,fontWeight:600,color:lvlColor,lineHeight:1}}>{ov}%</div>
+            <div style={{fontSize:16,fontWeight:700,color:lvlColor,margin:"6px 0 4px"}}>{lvl}</div>
+            <div style={{color:C.sub,fontSize:14}}>{correct} правильных из {total}</div>
+          </div>
+          <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:16,padding:20,marginBottom:12}}>
+            <h2 style={{fontFamily:"'Crimson Pro',serif",fontSize:18,fontWeight:600,margin:"0 0 16px",color:C.text}}>По разделам кодификатора</h2>
+            {Object.entries(TOPICS).map(([k,v])=>{
+              const s=ts[k];const p=pct(s.correct,s.total);
+              const bc=p>=80?"#34d399":p>=60?"#fbbf24":p>=40?"#fb923c":"#f87171";
+              return(
+                <div key={k} style={{marginBottom:15}}>
+                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}>
+                    <span style={{fontSize:13,fontWeight:600}}>{v.emoji} {v.label}</span>
+                    <span style={{fontSize:13,color:bc,fontWeight:700}}>{s.correct}/{s.total} ({p}%)</span>
+                  </div>
+                  <div style={{background:C.border,borderRadius:4,height:7,overflow:"hidden"}}>
+                    <div style={{height:"100%",width:`${p}%`,background:bc,borderRadius:4}}/>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {weak.length>0&&(
+            <div style={{background:"rgba(248,113,113,0.08)",border:"1px solid rgba(248,113,113,0.25)",borderRadius:16,padding:18,marginBottom:12}}>
+              <h3 style={{margin:"0 0 10px",fontSize:14,fontWeight:700,color:"#f87171"}}>🎯 Приоритеты подготовки (менее 60%)</h3>
+              {weak.map(([k,v])=>(
+                <div key={k} style={{display:"flex",alignItems:"center",gap:10,background:"rgba(0,0,0,0.2)",borderRadius:8,padding:"8px 12px",marginBottom:7}}>
+                  <span style={{fontSize:18}}>{TOPICS[k].emoji}</span>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:13,fontWeight:600,color:C.text}}>{TOPICS[k].label}</div>
+                    <div style={{fontSize:11,color:C.sub}}>{TOPICS[k].sub}</div>
+                  </div>
+                  <span style={{color:"#f87171",fontWeight:700,fontSize:13}}>{pct(v.correct,v.total)}%</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* TELEGRAM */}
+          <div style={{background:"rgba(38,132,212,0.08)",border:"1px solid rgba(38,132,212,0.3)",borderRadius:16,padding:18,marginBottom:10,textAlign:"center"}}>
+            {!sent?(
+              <>
+                <div style={{fontSize:13,color:C.sub,marginBottom:6,lineHeight:1.7,fontWeight:600,color:C.text}}>
+                  Учителю придут два сообщения:
+                </div>
+                <div style={{fontSize:12,color:C.sub,marginBottom:14,lineHeight:1.7,textAlign:"left",padding:"0 4px"}}>
+                  📊 Первое — общий результат и проценты по темам<br/>
+                  ✍️ Второе — твои письменные ответы с самооценкой
+                </div>
+                <button onClick={()=>handleSendTelegram(res)} disabled={sending}
+                  style={{width:"100%",background:sending?"#17304a":"#2884d4",color:"#fff",border:"none",borderRadius:12,padding:"14px 0",fontSize:15,fontWeight:700,cursor:sending?"not-allowed":"pointer",transition:"all .2s"}}>
+                  {sending?"⏳ Отправляю...":"✈️ Отправить результаты учителю"}
+                </button>
+              </>
+            ):(
+              <div style={{fontSize:16,fontWeight:700,color:"#34d399",padding:"10px 0"}}>
+                ✅ Результаты отправлены учителю в Telegram!
+              </div>
+            )}
+          </div>
+          <button onClick={reset} style={{width:"100%",background:"transparent",border:`1px solid ${C.border}`,borderRadius:12,padding:"13px 0",fontSize:14,fontWeight:600,color:C.sub,cursor:"pointer"}}>
+            Пройти тест заново
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  /* QUIZ */
+  const topic=TOPICS[q.tk];
+  const progress=(idx/Q.length)*100;
+  return(
+    <div style={{minHeight:"100vh",background:C.bg,padding:"18px 20px"}}>
+      <div style={{maxWidth:600,margin:"0 auto"}}>
+        <div style={{marginBottom:16}}>
+          <div style={{display:"flex",justifyContent:"space-between",marginBottom:7,alignItems:"center"}}>
+            <span style={{fontSize:12,color:C.sub}}>Вопрос {idx+1} из {Q.length} · {studentName}</span>
+            <span style={{fontSize:12,fontWeight:700,color:topic.color}}>{topic.emoji} {topic.label}</span>
+          </div>
+          <div style={{background:C.border,borderRadius:4,height:4}}>
+            <div style={{height:"100%",width:`${progress}%`,background:C.gold,borderRadius:4,transition:"width 0.3s"}}/>
+          </div>
+          <div style={{textAlign:"right",marginTop:4}}>
+            <span style={{fontSize:10,color:"#2a4a6a"}}>💾 прогресс сохранён</span>
+          </div>
+        </div>
+        <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:16,padding:22,marginBottom:12}}>
+          <div style={{marginBottom:12}}>
+            <span style={{background:`${topic.color}22`,color:topic.color,fontSize:10,fontWeight:700,padding:"3px 10px",borderRadius:20,letterSpacing:"1.2px",textTransform:"uppercase",display:"inline-block"}}>
+              {q.type==="s"?"Один ответ":q.type==="m"?"Несколько ответов":"Письменный ответ"}
+            </span>
+          </div>
+          <p style={{fontFamily:"'Crimson Pro',serif",fontSize:"clamp(16px,2.5vw,20px)",lineHeight:1.55,margin:"0 0 18px",color:C.text}}>{q.q}</p>
+
+          {q.type==="s"&&q.opts.map((opt,i)=>{
+            const sel=answers[idx]===i;
+            return(
+              <div key={i} onClick={()=>{if(answers[idx]===undefined)setAnswers(p=>({...p,[idx]:i}));}}
+                style={{padding:"12px 16px",marginBottom:8,borderRadius:10,border:`1px solid ${sel?topic.color:C.border}`,background:sel?`${topic.color}18`:"transparent",cursor:answers[idx]===undefined?"pointer":"default",display:"flex",alignItems:"center",gap:12,transition:"all 0.15s"}}>
+                <div style={{width:18,height:18,borderRadius:"50%",flexShrink:0,border:`2px solid ${sel?topic.color:C.sub}`,background:sel?topic.color:"transparent",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                  {sel&&<div style={{width:7,height:7,borderRadius:"50%",background:C.bg}}/>}
+                </div>
+                <span style={{fontSize:14,color:sel?C.text:C.sub,lineHeight:1.4}}>{opt}</span>
+              </div>
+            );
+          })}
+
+          {q.type==="m"&&q.opts.map((opt,i)=>{
+            const checked=multiSel.includes(i);
+            return(
+              <div key={i} onClick={()=>setMultiSel(p=>p.includes(i)?p.filter(x=>x!==i):[...p,i])}
+                style={{padding:"12px 16px",marginBottom:8,borderRadius:10,border:`1px solid ${checked?topic.color:C.border}`,background:checked?`${topic.color}18`:"transparent",cursor:"pointer",display:"flex",alignItems:"center",gap:12,transition:"all 0.15s"}}>
+                <div style={{width:18,height:18,borderRadius:4,flexShrink:0,border:`2px solid ${checked?topic.color:C.sub}`,background:checked?topic.color:"transparent",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                  {checked&&<span style={{color:C.bg,fontSize:11,fontWeight:700,lineHeight:1}}>✓</span>}
+                </div>
+                <span style={{fontSize:14,color:checked?C.text:C.sub,lineHeight:1.4}}>{opt}</span>
+              </div>
+            );
+          })}
+
+          {q.type==="t"&&(
+            <div>
+              <textarea value={textVal} onChange={e=>setTextVal(e.target.value)} disabled={showHint} rows={4}
+                placeholder="Введи свой ответ здесь..."
+                style={{width:"100%",background:"#0a1828",border:`1px solid ${showHint?C.border:C.gold}`,borderRadius:10,padding:"12px 14px",color:C.text,fontSize:14,resize:"vertical",lineHeight:1.6}}/>
+              {!showHint&&(
+                <button onClick={()=>setShowHint(true)}
+                  style={{marginTop:10,background:"transparent",border:`1px solid ${C.gold}`,borderRadius:8,padding:"9px 18px",color:C.gold,fontSize:13,fontWeight:600}}>
+                  Показать правильный ответ
+                </button>
+              )}
+              {showHint&&(
+                <div style={{marginTop:14}}>
+                  <div style={{background:"rgba(221,184,78,0.1)",border:"1px solid rgba(221,184,78,0.3)",borderRadius:10,padding:16,marginBottom:12}}>
+                    <div style={{fontSize:10,fontWeight:700,color:C.gold,marginBottom:7,textTransform:"uppercase",letterSpacing:1.2}}>Образцовый ответ</div>
+                    <div style={{fontSize:14,lineHeight:1.65,color:C.text}}>{q.hint}</div>
+                  </div>
+                  <div style={{fontSize:13,fontWeight:600,color:C.sub,marginBottom:9}}>Насколько верен твой ответ?</div>
+                  <div style={{display:"flex",gap:10}}>
+                    <button onClick={()=>{if(selfMark[idx]===undefined)setSelfMark(p=>({...p,[idx]:true}));}} disabled={selfMark[idx]!==undefined}
+                      style={{flex:1,padding:"11px 0",borderRadius:10,background:selfMark[idx]===true?"rgba(52,211,153,0.2)":"rgba(52,211,153,0.1)",border:selfMark[idx]===true?"1px solid #34d399":"1px solid rgba(52,211,153,0.3)",color:"#34d399",fontSize:13,fontWeight:700,cursor:selfMark[idx]!==undefined?"default":"pointer"}}>
+                      ✓ Ответил верно
+                    </button>
+                    <button onClick={()=>{if(selfMark[idx]===undefined)setSelfMark(p=>({...p,[idx]:false}));}} disabled={selfMark[idx]!==undefined}
+                      style={{flex:1,padding:"11px 0",borderRadius:10,background:selfMark[idx]===false?"rgba(248,113,113,0.2)":"rgba(248,113,113,0.1)",border:selfMark[idx]===false?"1px solid #f87171":"1px solid rgba(248,113,113,0.3)",color:"#f87171",fontSize:13,fontWeight:700,cursor:selfMark[idx]!==undefined?"default":"pointer"}}>
+                      ✗ Ответил неверно
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        <button onClick={handleNext} disabled={!canNext()}
+          style={{width:"100%",padding:14,borderRadius:12,border:"none",background:canNext()?C.gold:C.border,color:canNext()?"#07111d":C.sub,fontSize:15,fontWeight:700,cursor:canNext()?"pointer":"not-allowed",transition:"all 0.2s"}}>
+          {idx===Q.length-1?"Завершить тест 🎯":"Следующий вопрос →"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+const root=ReactDOM.createRoot(document.getElementById("root"));
+root.render(<EGETest/>);
+</script>
+</body>
+</html>
