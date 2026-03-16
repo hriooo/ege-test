@@ -254,6 +254,35 @@ function saveProgress(state){try{localStorage.setItem(SAVE_KEY,JSON.stringify(st
 function loadProgress(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
 function clearProgress(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
 
+function ContactBlock(){
+  return(
+    <div style={{marginTop:20,background:'rgba(129,140,248,0.07)',border:'1px solid rgba(129,140,248,0.25)',borderRadius:14,padding:'16px 18px'}}>
+      <div style={{fontSize:11,fontWeight:700,color:'#818cf8',textTransform:'uppercase',letterSpacing:'1.2px',marginBottom:10}}>Подготовка к ЕГЭ с репетитором</div>
+      <div style={{fontSize:13,color:'#5e7d9a',marginBottom:12,lineHeight:1.6}}>
+        Хочешь разобрать слабые темы и выйти на высокий балл? Записывайся на пробный урок!
+      </div>
+      <div style={{display:'flex',flexDirection:'column',gap:8}}>
+        <a href='https://t.me/karentutor' target='_blank' rel='noopener noreferrer'
+          style={{display:'flex',alignItems:'center',gap:10,background:'rgba(38,132,212,0.12)',border:'1px solid rgba(38,132,212,0.3)',borderRadius:10,padding:'10px 14px',textDecoration:'none'}}>
+          <div>
+            <div style={{fontSize:13,fontWeight:700,color:'#60a5fa'}}>Личный Telegram — записаться на урок</div>
+            <div style={{fontSize:12,color:'#5e7d9a'}}>@karentutor</div>
+          </div>
+          <span style={{marginLeft:'auto',fontSize:13,color:'#60a5fa'}}>→</span>
+        </a>
+        <a href='https://t.me/egesocietytut' target='_blank' rel='noopener noreferrer'
+          style={{display:'flex',alignItems:'center',gap:10,background:'rgba(129,140,248,0.1)',border:'1px solid rgba(129,140,248,0.3)',borderRadius:10,padding:'10px 14px',textDecoration:'none'}}>
+          <div>
+            <div style={{fontSize:13,fontWeight:700,color:'#818cf8'}}>Telegram-канал с материалами</div>
+            <div style={{fontSize:12,color:'#5e7d9a'}}>@egesocietytut</div>
+          </div>
+          <span style={{marginLeft:'auto',fontSize:13,color:'#818cf8'}}>→</span>
+        </a>
+      </div>
+    </div>
+  );
+}
+
 function EGETest(){
   const saved=loadProgress();
   const [screen,setScreen]=useState(saved?"resume":"name");
@@ -418,6 +447,7 @@ function EGETest(){
           style={{width:"100%",background:studentName.trim()?C.gold:C.border,color:studentName.trim()?"#07111d":C.sub,border:"none",borderRadius:12,padding:"15px 0",fontSize:16,fontWeight:700,cursor:studentName.trim()?"pointer":"not-allowed",transition:"all .2s"}}>
           Начать тест →
         </button>
+        <ContactBlock/>
       </div>
     </div>
   );
@@ -499,6 +529,7 @@ function EGETest(){
           <button onClick={reset} style={{width:"100%",background:"transparent",border:`1px solid ${C.border}`,borderRadius:12,padding:"13px 0",fontSize:14,fontWeight:600,color:C.sub,cursor:"pointer"}}>
             Пройти тест заново
           </button>
+          <ContactBlock/>
         </div>
       </div>
     );
